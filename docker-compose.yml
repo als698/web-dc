@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  web:
+    image: nginx:latest
+    container_name: web
+    ports:
+      - "80:80"
+    volumes:
+      - ./public:/var/www/html
+      - ./docker/conf/nginx.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - php
+    networks:
+      - net
+
+  php:
+    build:
+      context: docker
+    container_name: php
+    volumes:
+      - ./public:/var/www/html
+      - ./docker/conf/php.ini:/usr/local/etc/php/conf.d/php.ini
+    networks:
+      - net
+
+  db:
+    image: "mariadb:latest"
+    container_name: db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "mysqlroot"
+      MYSQL_DATABASE: "database"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "pass"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - net
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_USER: user
+      PMA_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD: mysqlroot
+    restart: always
+    ports:
+      - 8080:80
+    networks:
+      - net
+
+networks:
+  net:
+    driver: bridge
+volumes:
+  db:
+    driver: local
