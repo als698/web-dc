@@ -7,9 +7,9 @@
 
 ## Default Ports
 
-[x] 3306 MySQL
-[x] 80 NGINX
-[x] 8080 PHPMyAdmin
+[x] 3306 MySQL  
+[x] 80 NGINX  
+[x] 8080 PHPMyAdmin  
 
 ```sh
 git clone https://github.com/als698/web-dc.git .
